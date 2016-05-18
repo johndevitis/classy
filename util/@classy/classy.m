@@ -195,9 +195,9 @@ classdef classy < matlab.mixin.SetGet
             fprintf(fid,'\t\tfunction obj = %s()\n\t\tend\n\n',obj.name);
             fprintf(fid,'\t\t%%%% -- dependent methods -- %%%%\n\n');
             fprintf(fid,'\tend\n\n');
-            fprintf(fid,'\t%%%% -- static methods -- %%\n');
+            fprintf(fid,'\t%%%% -- static methods -- %%%%\n');
             fprintf(fid,'\tmethods (Static)\n\tend\n\n');
-            fprintf(fid,'\t%%%% -- internal methods -- %%\n');
+            fprintf(fid,'\t%%%% -- internal methods -- %%%%\n');
             fprintf(fid,'\tmethods (Access = private)\n\tend\n\n');
             % finish
             fprintf(fid,'end\n');
