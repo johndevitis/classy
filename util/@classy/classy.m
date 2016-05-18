@@ -7,7 +7,7 @@ classdef classy < matlab.mixin.SetGet
 
     %% -- properties -- %%
     properties
-        path = 'C:\Temp' % root path
+        path = 'C:\Temp' % root path  
         name = 'defaultclass'
         ext = 'm'
         prop 
