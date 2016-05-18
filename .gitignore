@@ -8,3 +8,6 @@ del/
 
 # zip files
 *.zip
+
+# matlab autosave files
+*.asv
