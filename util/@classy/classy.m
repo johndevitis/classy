@@ -34,8 +34,59 @@ classdef classy < matlab.mixin.SetGet
         % fcn 
         end
         
-        function gen_depends(obj)
-        % generate boiler plate syntax
+        function gen_depends(obj,cname)
+        % generate boiler plate syntax for dependent properties of classdef
+        % files. optional input of internal class reference name (default
+        % cname = 'obj')
+        % 
+        % file assumes: 
+        %   %% -- dependent props -- %% is located in the file
+        %
+        %   classdef file uses 'obj' as the internal class reference  
+        
+            obj.get_propd(); % get dependent property name/value pairs
+            if nargin < 2 cname = 'obj'; end % check for null cname entry 
+            
+            % open file for reading  
+            fid = obj.open('r');             
+            
+            % setup meta
+            flg = 0; cnt = 0; txt = [];
+            % loop for enter flag
+            enterflag = '%% -- dependent methods -- %%';
+            while ~feof(fid) && flg == 0
+                % read line
+                tline = fgetl(fid);
+                % search for literals
+                if strcmp(tline,enterflag)
+                    disp('found it')
+                    flg = 1;
+                end
+                
+                
+            end
+            
+%             % find dependent methods section (for set/get of dependent props)
+%         
+%             % loop to write functions
+%             fprintf('Writing GET functions for dependent properties... \n');
+%             for ii = 1:length(obj.prop_d.name)
+%                 fprintf(fid,'\t\tfunction %s = get.%s(%s)\n',...
+%                     obj.prop_d.name{ii},obj.prop_d.name{ii},cname);
+%                 
+%                 fprintf('\t %i function(s) written\n',ii);
+%             end
+%             fprintf('Done.\n');
+%             % find dependent methods section
+%         
+%             % write to file
+        
+            % close file & report status
+            status = fclose(fid);
+            if status == 0; fprintf('Read successful. \n');
+            else fprintf('Not successful. Damn. \n');
+            end
+        
         end
         
         function get_propd(obj)
@@ -59,7 +110,7 @@ classdef classy < matlab.mixin.SetGet
             % mine file for contents
             [name, desc] = parse_props(enterflag,exitflag,contents);
             % save name/value pair to object property structure
-            obj.prop_d.name = [name{:}];
+            obj.prop_d.name = [name{:}]; 
             obj.prop_d.desc = [desc{:}];
         end
         
@@ -90,37 +141,6 @@ classdef classy < matlab.mixin.SetGet
             obj.prop.name = [name{:}];
             obj.prop.desc = [desc{:}];
         end
-        
-%%         function txt = parse_literals(obj,enterflag,exitflag)
-%         % function accepts and enterflag and exit flag and returns all
-%         % lines of text within the file inbetween
-%             fid = obj.open();
-%             % setup meta
-%             flg = 0; cnt = 0; txt = [];
-%             % loop for flags
-%             while ~feof(fid) && flg == 0
-%                 % read line
-%                 tline = fgetl(fid);
-%                 % search for literals
-%                 ent = strfind(tline, enterflag);
-%                 ext = strfind(tline, exitflag); 
-%                 % check enter
-%                 if ~isempty(ent)
-%                     cnt = cnt+1;
-%                 end
-%                 % check exit
-%                 if ~isempty(ext)
-%                     flg = 1;
-%                 end
-%                 % check for save
-%                 if cnt >= 1 && flg == 0
-%                     % save line
-%                     txt{cnt} = sprintf('%s',tline);
-%                     % advance counter
-%                     cnt = cnt+1
-%                 end
-%             end
-%         end
         
         function contents = read(obj)              
         % read any ascii file line by line
@@ -162,18 +182,18 @@ classdef classy < matlab.mixin.SetGet
             fprintf(fid,'%% author: \n');
             fprintf(fid,'%% date: %s\n\n', char(datetime));
             % properties
-            fprintf(fid,'\t%%%% -- object properties --%%%%\n');
+            fprintf(fid,'\t%%%% -- object properties -- %%%%\n');
             fprintf(fid,'\tproperties\n\tend\n\n');
-            fprintf(fid,'\t%%%% -- dependent properties --%%%%\n');
+            fprintf(fid,'\t%%%% -- dependent properties -- %%%%\n');
             fprintf(fid,'\tproperties (Dependent)\n\tend\n\n');            
-            fprintf(fid,'\t%%%% -- developer properties --%%%%\n');
+            fprintf(fid,'\t%%%% -- developer properties -- %%%%\n');
             fprintf(fid,'\tproperties (Access = private)\n\tend\n\n');
             % methods
-            fprintf(fid,'\t%%%% -- dynamic methods--%%%%\n');
+            fprintf(fid,'\t%%%% -- dynamic methods-- %%%%\n');
             fprintf(fid,'\tmethods\n');
             fprintf(fid,'\t\t%%%% -- constructor -- %%%%\n');
             fprintf(fid,'\t\tfunction obj = %s()\n\t\tend\n\n',obj.name);
-            fprintf(fid,'\t\t%%%% -- dependent methods -- %%\n\n');
+            fprintf(fid,'\t\t%%%% -- dependent methods -- %%%%\n\n');
             fprintf(fid,'\tend\n\n');
             fprintf(fid,'\t%%%% -- static methods -- %%\n');
             fprintf(fid,'\tmethods (Static)\n\tend\n\n');
@@ -247,6 +267,7 @@ function [name, desc] = parse_props(enterflag,exitflag,contents)
 % Bug2: the inverse of bug1 is true - function requires comments (desc) to
 % register a class property name
 %
+% Bug3: does not pick up two spaces between <name> % __ <desc>
 % 
     writeflag = 0; 
     cnt = 0; % match counter
@@ -279,3 +300,35 @@ function [name, desc] = parse_props(enterflag,exitflag,contents)
     if isempty(name) name = {''}; end
     if isempty(desc) desc = {''}; end
 end
+
+
+%         function txt = parse_literals(obj,enterflag,exitflag)
+%         % function accepts and enterflag and exit flag and returns all
+%         % lines of text within the file inbetween
+%             fid = obj.open();
+%             % setup meta
+%             flg = 0; cnt = 0; txt = [];
+%             % loop for flags
+%             while ~feof(fid) && flg == 0
+%                 % read line
+%                 tline = fgetl(fid);
+%                 % search for literals
+%                 ent = strfind(tline, enterflag);
+%                 ext = strfind(tline, exitflag); 
+%                 % check enter
+%                 if ~isempty(ent)
+%                     cnt = cnt+1;
+%                 end
+%                 % check exit
+%                 if ~isempty(ext)
+%                     flg = 1;
+%                 end
+%                 % check for save
+%                 if cnt >= 1 && flg == 0
+%                     % save line
+%                     txt{cnt} = sprintf('%s',tline);
+%                     % advance counter
+%                     cnt = cnt+1
+%                 end
+%             end
+%         end
