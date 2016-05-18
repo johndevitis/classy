@@ -10,8 +10,8 @@ classdef classy < matlab.mixin.SetGet
         path = 'C:\Temp' % root path  
         name = 'defaultclass'
         ext = 'm'
-        prop 
-        desc 
+        prop
+        prop_d
     end
     
     %% -- dependent properties -- %%
@@ -38,12 +38,10 @@ classdef classy < matlab.mixin.SetGet
         % generate boiler plate syntax
         end
         
-        function get_props(obj)
-        % function reads <classname>.m file and grabs property variable
-        % names paired with the adjacent comment discription. this is a 
-        % helper file to automate documentation files. the fcn uses the 
-        % classy.read() function for some automated error screening (this 
-        % might be removed in the future).
+        function get_propd(obj)
+        % this is the sister function to get_props() that reads the dependent
+        % object properties and saves name/value pairs. see get_props() help
+        % for more description.  
         %
         % classdef classname
         % properties        <- write flag
@@ -55,44 +53,45 @@ classdef classy < matlab.mixin.SetGet
         % output -> var  = {'var1', 'var2'} 
         %           desc = {'desc1','desc2'}
         %
-        % BUG: currently captures the enterflag, need to remove
+            contents = obj.read(); % read file contents
+            % set flags
+            enterflag = 'properties (Dependent)'; exitflag = 'end';
+            % mine file for contents
+            [name, desc] = parse_props(enterflag,exitflag,contents);
+            % save name/value pair to object property structure
+            obj.prop_d.name = [name{:}];
+            obj.prop_d.desc = [desc{:}];
+        end
+        
+        function get_props(obj)
+        % obj.get_props() reads <classname>.m file and grabs property variable
+        % names paired with the adjacent comment discription. this is a 
+        % helper file to automate documentation files. the fcn uses the 
+        % classy.read() function for some automated error screening (this 
+        % might be removed in the future) and the parse_props utility 
+        % function to parse name/value pairs of standard object properties
+        %
+        % classdef classname
+        % properties        <- write flag
+        %   var1 % desc1    <- this works
+        %   var2 %desc2     <- this also works
+        %   var3%desc3      <- this also also works
+        % end               <- exitflag
+        %
+        % output -> var  = {'var1', 'var2'} 
+        %           desc = {'desc1','desc2'}
         %
             contents = obj.read(); % read file contents
             % set flags
             enterflag = 'properties'; exitflag = 'end';
-            writeflag = 0; 
-            cnt = 0; % match counter
-            txt=[];  % matched content
-            for ii = 1:length(contents) % loop for flags
-                % trim leading/trailing whitespace of line ii
-                cont = strtrim(contents{ii});                
-                % check start flag
-                if strcmp(cont,enterflag)
-                    writeflag = 1; % flag for write
-                end                
-                % check exit flag
-                if strcmp(cont,exitflag) && writeflag == 1
-                    % if previously writing and exitflag caught
-                    % then stop writing
-                    writeflag = 0; 
-                end
-                % check for write flag, do not write on first flag
-                if writeflag == 1
-                    cnt = cnt+1;     % advance matched counter
-                    txt{cnt} = cont; % save matched content
-                end                  
-            end                      
-            % remove enter flag from matched text
-            txt = txt(2:end);
-            % separate variable name and descriptive comment 
-            prop = regexp(txt,'\w*(?=(.)?%(.)?)','match');
-            desc = regexp(txt,'(?<=%(.)?)\w+.*$','match');
-            % save to object
-            obj.prop = [prop{:}];
-            obj.desc = [desc{:}];
+            % mine file for contents
+            [name, desc] = parse_props(enterflag,exitflag,contents);
+            % save name/value pair to object property structure
+            obj.prop.name = [name{:}];
+            obj.prop.desc = [desc{:}];
         end
-%         
-%         function txt = parse_literals(obj,enterflag,exitflag)
+        
+%%         function txt = parse_literals(obj,enterflag,exitflag)
 %         % function accepts and enterflag and exit flag and returns all
 %         % lines of text within the file inbetween
 %             fid = obj.open();
@@ -199,8 +198,7 @@ classdef classy < matlab.mixin.SetGet
     end
     
     %% -- static methods -- %%
-    methods (Static)
- 
+    methods (Static) 
     end
     
     %% -- internal methods -- %%    
@@ -231,4 +229,53 @@ classdef classy < matlab.mixin.SetGet
         end
         
     end
+    
+end
+
+%% -- utility functions -- %%
+function [name, desc] = parse_props(enterflag,exitflag,contents)
+% mine classdef property definitions by enter/exit flags and return
+% name/value pairs
+%
+% Bug1: currently does not support empty name/description grouping. 
+%   that is:
+%       properties 
+%           % this is a description w/ no name
+%       end
+%   will not work
+%
+% Bug2: the inverse of bug1 is true - function requires comments (desc) to
+% register a class property name
+%
+% 
+    writeflag = 0; 
+    cnt = 0; % match counter
+    txt=[];  % matched content
+    for ii = 1:length(contents) % loop for flags
+        % trim leading/trailing whitespace of line ii
+        cont = strtrim(contents{ii});                
+        % check start flag
+        if strcmp(cont,enterflag)
+            writeflag = 1; % flag for write
+        end                
+        % check exit flag
+        if strcmp(cont,exitflag) && writeflag == 1
+            % if previously writing and exitflag caught
+            % then stop writing
+            writeflag = 0; 
+        end
+        % check for write flag, do not write on first flag
+        if writeflag == 1
+            cnt = cnt+1;     % advance matched counter
+            txt{cnt} = cont; % save matched content
+        end                  
+    end                      
+    % REMOVE enter flag from matched text
+    txt = txt(2:end);
+    % separate variable name and descriptive comment 
+    name = regexp(txt,'\w*(?=(.)?%(.)?)','match');
+    desc = regexp(txt,'(?<=%(.)?)\w+.*$','match');
+    % error screen null prop/desc entries
+    if isempty(name) name = {''}; end
+    if isempty(desc) desc = {''}; end
 end
