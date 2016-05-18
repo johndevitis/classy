@@ -1,0 +1,10 @@
+# ignore...
+
+# any reference folders
+ref/
+
+# files staged for deletion 
+del/
+
+# zip files
+*.zip
