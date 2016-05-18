@@ -11,7 +11,7 @@ classdef classy < matlab.mixin.SetGet
         name = 'defaultclass'
         ext = 'm'
         prop
-        prop_d
+        propd
     end
     
     %% -- dependent properties -- %%
@@ -34,7 +34,7 @@ classdef classy < matlab.mixin.SetGet
         % fcn 
         end
         
-        function gen_depends(obj,cname)
+        function write_propd(obj,cname)
         % generate boiler plate syntax for dependent properties of classdef
         % files. optional input of internal class reference name (default
         % cname = 'obj')
@@ -70,9 +70,9 @@ classdef classy < matlab.mixin.SetGet
 %         
 %             % loop to write functions
 %             fprintf('Writing GET functions for dependent properties... \n');
-%             for ii = 1:length(obj.prop_d.name)
+%             for ii = 1:length(obj.propd.name)
 %                 fprintf(fid,'\t\tfunction %s = get.%s(%s)\n',...
-%                     obj.prop_d.name{ii},obj.prop_d.name{ii},cname);
+%                     obj.propd.name{ii},obj.propd.name{ii},cname);
 %                 
 %                 fprintf('\t %i function(s) written\n',ii);
 %             end
@@ -90,8 +90,8 @@ classdef classy < matlab.mixin.SetGet
         end
         
         function get_propd(obj)
-        % this is the sister function to get_props() that reads the dependent
-        % object properties and saves name/value pairs. see get_props() help
+        % this is the sister function to get_prop() that reads the dependent
+        % object properties and saves name/value pairs. see get_prop() help
         % for more description.  
         %
         % classdef classname
@@ -108,18 +108,18 @@ classdef classy < matlab.mixin.SetGet
             % set flags
             enterflag = 'properties (Dependent)'; exitflag = 'end';
             % mine file for contents
-            [name, desc] = parse_props(enterflag,exitflag,contents);
+            [name, desc] = parse_txt(enterflag,exitflag,contents);
             % save name/value pair to object property structure
-            obj.prop_d.name = [name{:}]; 
-            obj.prop_d.desc = [desc{:}];
+            obj.propd.name = [name{:}]; 
+            obj.propd.desc = [desc{:}];
         end
         
-        function get_props(obj)
-        % obj.get_props() reads <classname>.m file and grabs property variable
+        function get_prop(obj)
+        % obj.get_prop() reads <classname>.m file and grabs property variable
         % names paired with the adjacent comment discription. this is a 
         % helper file to automate documentation files. the fcn uses the 
         % classy.read() function for some automated error screening (this 
-        % might be removed in the future) and the parse_props utility 
+        % might be removed in the future) and the parse_txt utility 
         % function to parse name/value pairs of standard object properties
         %
         % classdef classname
@@ -136,7 +136,7 @@ classdef classy < matlab.mixin.SetGet
             % set flags
             enterflag = 'properties'; exitflag = 'end';
             % mine file for contents
-            [name, desc] = parse_props(enterflag,exitflag,contents);
+            [name, desc] = parse_txt(enterflag,exitflag,contents);
             % save name/value pair to object property structure
             obj.prop.name = [name{:}];
             obj.prop.desc = [desc{:}];
@@ -253,14 +253,14 @@ classdef classy < matlab.mixin.SetGet
 end
 
 %% -- utility functions -- %%
-function [name, desc] = parse_props(enterflag,exitflag,contents)
+function [name, desc] = parse_txt(enterflag,exitflag,contents)
 % mine classdef property definitions by enter/exit flags and return
 % name/value pairs
 %
 % Bug1: currently does not support empty name/description grouping. 
 %   that is:
 %       properties 
-%           % this is a description w/ no name
+%           % this is a description w/ no name 
 %       end
 %   will not work
 %
