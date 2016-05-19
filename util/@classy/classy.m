@@ -8,7 +8,7 @@ classdef classy < matlab.mixin.SetGet
     %% -- properties -- %%
     properties
         path = 'C:\Temp' % root path  
-        name = 'defaultclass'
+        name = 'foo'
         ext = 'm'
         prop
         propd
@@ -40,53 +40,58 @@ classdef classy < matlab.mixin.SetGet
         % cname = 'obj')
         % 
         % file assumes: 
-        %   %% -- dependent props -- %% is located in the file
+        %   %% -- dependent props -- %% is located in the file to find the
+        %   name/description pairs of object properties and commented
+        %   descriptions. 
+        % 
+        %   %% -- dependent methods -- %% is the enter flag to start
+        %   writing the classdef's dependent properties
         %
-        %   classdef file uses 'obj' as the internal class reference  
+        %   classy uses 'obj' as the default internal class reference 
         
-            obj.get_propd(); % get dependent property name/value pairs
             if nargin < 2 cname = 'obj'; end % check for null cname entry 
+            % get/refresh dependent property name/value pairs
+            obj.get_propd(); 
             
-            % open file for reading  
-            fid = obj.open('r');             
+            % get file contents
+            contents = obj.read();
             
-            % setup meta
-            flg = 0; cnt = 0; txt = [];
-            % loop for enter flag
+            % define literal flag to start write
             enterflag = '%% -- dependent methods -- %%';
-            while ~feof(fid) && flg == 0
-                % read line
-                tline = fgetl(fid);
-                % search for literals
-                if strcmp(tline,enterflag)
-                    disp('found it')
-                    flg = 1;
-                end
-                
-                
+            
+            % loop to find start line number
+            ind = [];
+            for ii = 1:length(contents)
+                chk = strfind(contents{ii},enterflag);
+                % if found, save current line number
+                if ~isempty(chk)
+                    ind = ii;
+                end                                                    
             end
             
-%             % find dependent methods section (for set/get of dependent props)
-%         
-%             % loop to write functions
-%             fprintf('Writing GET functions for dependent properties... \n');
-%             for ii = 1:length(obj.propd.name)
-%                 fprintf(fid,'\t\tfunction %s = get.%s(%s)\n',...
-%                     obj.propd.name{ii},obj.propd.name{ii},cname);
-%                 
-%                 fprintf('\t %i function(s) written\n',ii);
-%             end
-%             fprintf('Done.\n');
-%             % find dependent methods section
-%         
-%             % write to file
-        
-            % close file & report status
-            status = fclose(fid);
-            if status == 0; fprintf('Read successful. \n');
-            else fprintf('Not successful. Damn. \n');
+            % open file for reading/writing
+            fid = obj.open('r+');
+            
+            % move to write_start line
+            for ii = 1:ind
+                nline = fgetl(fid);
             end
-        
+            
+            % loop to write functions
+            fprintf('Writing the damn things... \n');
+            for ii = 1:length(obj.propd.name)
+                % write fcn header
+                fprintf(fid,'\n\t\tfunction %s = get.%s(%s)',...
+                    obj.propd.name{ii},obj.propd.name{ii},cname);
+                % write object property description as fcn documentation
+                fprintf(fid,'\n\t\t%%%% %s\n',obj.propd.desc{ii});                
+                % finish w/ end
+                fprintf(fid,'\n\t\tend\n');
+                % update user
+                fprintf('\t %i function(s) written\n',ii);
+            end
+            fprintf('Done.\n');
+            fclose(fid);
         end
         
         function get_propd(obj)
@@ -180,7 +185,7 @@ classdef classy < matlab.mixin.SetGet
             fprintf(fid,'classdef %s\n', obj.name);
             fprintf(fid,'%%%% classdef %s\n', obj.name);
             fprintf(fid,'%% author: \n');
-            fprintf(fid,'%% date: %s\n\n', char(datetime));
+            fprintf(fid,'%% create date: %s\n\n', char(datetime));
             % properties
             fprintf(fid,'\t%%%% -- object properties -- %%%%\n');
             fprintf(fid,'\tproperties\n\tend\n\n');
@@ -300,7 +305,6 @@ function [name, desc] = parse_txt(enterflag,exitflag,contents)
     if isempty(name) name = {''}; end
     if isempty(desc) desc = {''}; end
 end
-
 
 %         function txt = parse_literals(obj,enterflag,exitflag)
 %         % function accepts and enterflag and exit flag and returns all
