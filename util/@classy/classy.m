@@ -47,19 +47,17 @@ classdef classy < matlab.mixin.SetGet
         %   %% -- dependent methods -- %% is the enter flag to start
         %   writing the classdef's dependent properties
         %
-        %   classy uses 'obj' as the default internal class reference 
-        
+        %   classy uses 'obj' as the default internal class reference          
             if nargin < 2 cname = 'obj'; end % check for null cname entry 
             % get/refresh dependent property name/value pairs
-            obj.get_propd(); 
-            
+            obj.get_propd();             
             % get file contents
             contents = obj.read();
             
+            % find where to write new content
             % define literal flag to start write
-            enterflag = '%% -- dependent methods -- %%';
-            
-            % loop to find start line number
+            enterflag = '%% -- dependent methods -- %%';             
+            % loop to find enterflag in contents -> start line number
             ind = [];
             for ii = 1:length(contents)
                 chk = strfind(contents{ii},enterflag);
@@ -69,28 +67,39 @@ classdef classy < matlab.mixin.SetGet
                 end                                                    
             end
             
-            % open file for reading/writing
-            fid = obj.open('r+');
-            
-            
-            % move to write_start line
-            for ii = 1:ind
-                nline = fgetl(fid);
-            end
-            
-            % loop to write functions
-            fprintf('Writing the damn things... \n');
+            % build content to write
+            fprintf('Building the damn things... \n');
+            % preallocate function strings to insert into file contents
+            % 6 lines (per function) x number of functions to write  
+            newContents = cell(5,length(obj.propd.name));
+            % loop properties to build strings
             for ii = 1:length(obj.propd.name)
-                % write fcn header
-                fprintf(fid,'\n\t\tfunction %s = get.%s(%s)',...
+                % add blank line before fcn
+                newContents{1,ii} = '';
+                % fcn header
+                newContents{2,ii} = sprintf('\t\tfunction %s = get.%s(%s)',...
                     obj.propd.name{ii},obj.propd.name{ii},cname);
-                % write object property description as fcn documentation
-                fprintf(fid,'\n\t\t%%%% %s\n',obj.propd.desc{ii});                
+                % object property description as fcn documentation
+                newContents{3,ii} = sprintf('\t\t%%%% %s',obj.propd.desc{ii});    
+                % add blank space for writings thangs
+                newContents{4,ii} = '';
                 % finish w/ end
-                fprintf(fid,'\n\t\tend\n');
-                % update user
-                fprintf('\t %i function(s) written\n',ii);
+                newContents{5,ii} = sprintf('\t\tend');
             end
+            
+            % insert newContent into existing content
+            aa = contents(1:ind);       % before enterflag
+            bb = newContents(:);        % generated function strings
+            cc = contents(ind+1:end);   % after enterflag
+            allContent = [aa;bb;cc];
+            
+            % write file to disk
+            fprintf('Writing the damn things... \n');
+            % open file for writing 
+            % this will overwrite the file but it is  necessary and the 
+            % previous contents were found before and will be re-written
+            fid = obj.open('w');
+            fprintf(fid,'%s\n',allContent{:});
             fprintf('Done.\n');
             fclose(fid);
         end
@@ -114,7 +123,7 @@ classdef classy < matlab.mixin.SetGet
             % set flags
             enterflag = 'properties (Dependent)'; exitflag = 'end';
             % mine file for contents
-            [name, desc] = parse_txt(enterflag,exitflag,contents);
+            [name, desc] = parse_props(enterflag,exitflag,contents);
             % save name/value pair to object property structure
             obj.propd.name = [name{:}]; 
             obj.propd.desc = [desc{:}];
@@ -125,7 +134,7 @@ classdef classy < matlab.mixin.SetGet
         % names paired with the adjacent comment discription. this is a 
         % helper file to automate documentation files. the fcn uses the 
         % classy.read() function for some automated error screening (this 
-        % might be removed in the future) and the parse_txt utility 
+        % might be removed in the future) and the parse_props utility 
         % function to parse name/value pairs of standard object properties
         %
         % classdef classname
@@ -142,7 +151,7 @@ classdef classy < matlab.mixin.SetGet
             % set flags
             enterflag = 'properties'; exitflag = 'end';
             % mine file for contents
-            [name, desc] = parse_txt(enterflag,exitflag,contents);
+            [name, desc] = parse_props(enterflag,exitflag,contents);
             % save name/value pair to object property structure
             obj.prop.name = [name{:}];
             obj.prop.desc = [desc{:}];
@@ -259,7 +268,7 @@ classdef classy < matlab.mixin.SetGet
 end
 
 %% -- utility functions -- %%
-function [name, desc] = parse_txt(enterflag,exitflag,contents)
+function [name, desc] = parse_props(enterflag,exitflag,contents)
 % mine classdef property definitions by enter/exit flags and return
 % name/value pairs
 %
@@ -307,7 +316,7 @@ function [name, desc] = parse_txt(enterflag,exitflag,contents)
     if isempty(desc) desc = {''}; end
 end
 
-%         function txt = parse_literals(obj,enterflag,exitflag)
+%%         function txt = parse_literals(obj,enterflag,exitflag)
 %         % function accepts and enterflag and exit flag and returns all
 %         % lines of text within the file inbetween
 %             fid = obj.open();
