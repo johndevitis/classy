@@ -72,6 +72,7 @@ classdef classy < matlab.mixin.SetGet
             % open file for reading/writing
             fid = obj.open('r+');
             
+            
             % move to write_start line
             for ii = 1:ind
                 nline = fgetl(fid);
