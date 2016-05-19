@@ -88,9 +88,9 @@ classdef classy < matlab.mixin.SetGet
                 newContents{2,ii} = sprintf('\t\tfunction %s = get.%s(%s)',...
                     obj.propd.name{ii},obj.propd.name{ii},cname);
                 % object property description as fcn documentation
-                newContents{3,ii} = sprintf('\t\t%%%% %s',obj.propd.desc{ii});    
+                newContents{3,ii} = sprintf('\t\t%% %s',obj.propd.desc{ii});    
                 % add blank space for writings thangs
-                newContents{4,ii} = '';
+                newContents{4,ii} = '\t\t\t';
                 % finish w/ end
                 newContents{5,ii} = sprintf('\t\tend');
             end
