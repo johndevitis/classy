@@ -26,3 +26,4 @@ contents = c.read()
 %% write dependent properties and descriptions to dependent methods section
 %   note: this requires manual addition of properties and commented
 %   descriptions 
+c.write_propd();

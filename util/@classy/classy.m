@@ -67,6 +67,14 @@ classdef classy < matlab.mixin.SetGet
                 end                                                    
             end
             
+            % error screen flag not found 
+            %  note: w/o this classy will overwrite entire file w/ fcn
+            %  calls
+            if isempty(ind)
+                fprintf('parse enterflag not found \n');
+                return 
+            end 
+            
             % build content to write
             fprintf('Building the damn things... \n');
             % preallocate function strings to insert into file contents
