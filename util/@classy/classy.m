@@ -76,7 +76,7 @@ classdef classy < matlab.mixin.SetGet
             end 
             
             % build content to write
-            fprintf('Building the damn things... \n');
+            fprintf('Building the damn things... \n'); 
             % preallocate function strings to insert into file contents
             % 6 lines (per function) x number of functions to write  
             newContents = cell(5,length(obj.propd.name));
