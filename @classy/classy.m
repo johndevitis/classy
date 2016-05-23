@@ -8,9 +8,9 @@ classdef classy < matlab.mixin.SetGet
     %% -- properties -- %%
     properties
         path = 'C:\Temp' % root path  
-        name = 'foo'
-        ext = 'm'
-        prop
+        name = 'foo'     % class name 
+        ext = 'm'        % matlab ext
+        prop             
         propd
     end
     
