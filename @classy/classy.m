@@ -48,7 +48,7 @@ classdef classy < matlab.mixin.SetGet
         %   writing the classdef's dependent properties
         %
         %   classy uses 'obj' as the default internal class reference          
-            if nargin < 2 cname = 'obj'; end % check for null cname entry 
+            if nargin < 2, cname = 'obj'; end % check for null cname entry 
             % get/refresh dependent property name/value pairs
             obj.get_propd();             
             % get file contents
@@ -255,12 +255,12 @@ classdef classy < matlab.mixin.SetGet
         end
         
         function fid = open(obj,perm)
-        % open file with error screening capability. 
-        % this function is meant to be a catch-all for catching errors (for
-        % lack of a better word) and aid in scalability
-        % 
-        % perm = optional permissions, defaults to read only
-        %    
+            % open file with error screening capability.
+            % this function is meant to be a catch-all for catching errors (for
+            % lack of a better word) and aid in scalability
+            %
+            % perm = optional permissions, defaults to read only
+            %
             if nargin < 2 % error screen null perm entry
                 perm = 'r'; % default to read only
             end
