@@ -184,18 +184,30 @@ classdef classy < matlab.mixin.SetGet
             end
         end
         
-        function create_class(obj)
+        function create_class(obj,mkfolder)
         % automate standard class generation 
         %   removes some boiler plate code 
         % notes:
+        %   mkfolder = 1 by default and will create @classname folder for
+        %   the class. to turn this off, pass in a false boolean 
         %   object file name used as class name
         %   class folder created in obj.path and obj.ext ignored     
         %   appends to end of file if exists
-        
-            % add @class folder
-            obj.path = fullfile(obj.path,['@' obj.name]); 
+            
+            % error screen null entries
+            if nargin < 2       % chk number of inputs
+                mkfolder = 1;   % default to folder version
+            end
+            
+            % check mkfolder logic
+            if mkfolder         
+                % add @class folder
+                obj.path = fullfile(obj.path,['@' obj.name]); 
+            end            
+            
             mkdir(obj.path);
             fprintf('Added class folder %s\n',obj.path)
+
             % create class.m file in @class folder
             fid = fopen(obj.fullname,'a');
             % ---- write contents ----
