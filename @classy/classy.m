@@ -212,7 +212,7 @@ classdef classy < matlab.mixin.SetGet
             fid = fopen(obj.fullname,'a');
             % ---- write contents ----
             % header
-            fprintf(fid,'classdef %s\n', obj.name);
+            fprintf(fid,'classdef %s < matlab.mixin.SetGet\n', obj.name);
             fprintf(fid,'%%%% classdef %s\n', obj.name);
             fprintf(fid,'%% author: \n');
             fprintf(fid,'%% create date: %s\n\n', char(datetime));
