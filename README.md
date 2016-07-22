@@ -37,11 +37,11 @@ c = classy();
 c.name = 'myclass';
 ```
 
-when creating the full class folder and file either call the method with no inputs or explicitly pass a true boolean  
+when creating the full class folder and file either call the `crate()` method with no inputs or explicitly pass a true boolean  
 ```
-c.create_class() % c.create_class(1) works also
+c.create() % c.create(1) works also
 ```
 
-this created the folder `@myclass` and placed the class def file `myclass.m` inside of it (or appended if you messed up and called it twice).
+this creates the folder `@myclass` and places the classdef file `myclass.m` inside of it (or appended if you messed up and called it twice).
 
-*note that the c.fullname property was updated after the `create_class()` method was called but not before*
+*note that the c.fullname property was updated after the `create()` method was called but not before*
