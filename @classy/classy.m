@@ -1,6 +1,8 @@
 classdef classy < matlab.mixin.SetGet
 %% classy is a utility class used for automated generation and 
-% documentation of classdefs
+% documentation of classdefs. 
+%
+% * optional input fullpath to assign path, name, and extension on create
 %
 % author: jdv 
 % create date: 04232016
@@ -28,21 +30,15 @@ classdef classy < matlab.mixin.SetGet
     %% -- dynamic methods -- %%
     methods
         %% -- constructor -- %%
-        function self = classy()
+        function self = classy(fullpath)
+            if nargin > 0
+                [self.path,self.name,self.ext] = fileparts(fullpath);
+                if isempty(self.ext)
+                    self.ext = '.m';
+                end
+            end
         end        
         
-        function file = gen_doc(self)
-        % fcn 
-        end
-        
-        function strip_folder(self)
-        % remove @class_name from object path if present
-        % note - updates instance of self.path only
-            ind = regexp(self.path,'@','once');  % find location of @ folder
-            if ~isempty(ind) % if present, remove
-                self.path = self.path(1:ind-1);                
-            end
-        end
         
         function write_propd(self,cname)
         % generate boiler plate syntax for dependent properties of classdef
@@ -196,7 +192,7 @@ classdef classy < matlab.mixin.SetGet
         
         function create(self,mkfolder)
         % automate standard class generation 
-        %   removes some boiler plate code 
+        %   removes some boiler pgitlate code 
         % notes:
         %   * mkfolder = 1 by default and will create @classname folder for
         %   the class. to turn this off, pass in a false boolean 
@@ -244,7 +240,7 @@ classdef classy < matlab.mixin.SetGet
             fprintf(fid,'\t%%%% -- static methods -- %%%%\n');
             fprintf(fid,'\tmethods (Static)\n\tend\n\n');
             fprintf(fid,'\t%%%% -- internal methods -- %%%%\n');
-            fprintf(fid,'\tmethods (Access = private)\n\tend\n\n');
+            fprintf(fid,'\tmethods (Access = protected)\n\tend\n\n');
             % finish
             fprintf(fid,'end\n');
             % close file
