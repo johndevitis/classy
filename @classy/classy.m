@@ -10,6 +10,7 @@ classdef classy < matlab.mixin.SetGet
         path = 'C:\Temp' % root path  
         name = 'foo'     % class name 
         ext = 'm'        % matlab ext
+        author           % class creator
         prop             
         propd
     end
@@ -27,17 +28,17 @@ classdef classy < matlab.mixin.SetGet
     %% -- dynamic methods -- %%
     methods
         %% -- constructor -- %%
-        function obj = classy()
+        function self = classy()
         end        
         
-        function file = gen_doc(obj)
+        function file = gen_doc(self)
         % fcn 
         end
         
-        function write_propd(obj,cname)
+        function write_propd(self,cname)
         % generate boiler plate syntax for dependent properties of classdef
         % files. optional input of internal class reference name (default
-        % cname = 'obj')
+        % cname = 'self')
         % 
         % file assumes: 
         %   %% -- dependent props -- %% is located in the file to find the
@@ -47,12 +48,12 @@ classdef classy < matlab.mixin.SetGet
         %   %% -- dependent methods -- %% is the enter flag to start
         %   writing the classdef's dependent properties
         %
-        %   classy uses 'obj' as the default internal class reference          
-            if nargin < 2, cname = 'obj'; end % check for null cname entry 
+        %   classy uses 'self' as the default internal class reference          
+            if nargin < 2, cname = 'self'; end % check for null cname entry 
             % get/refresh dependent property name/value pairs
-            obj.get_propd();             
+            self.get_propd();             
             % get file contents
-            contents = obj.read();
+            contents = self.read();
             
             % find where to write new content
             % define literal flag to start write
@@ -79,16 +80,16 @@ classdef classy < matlab.mixin.SetGet
             fprintf('Building the damn things... \n'); 
             % preallocate function strings to insert into file contents
             % 6 lines (per function) x number of functions to write  
-            newContents = cell(5,length(obj.propd.name));
+            newContents = cell(5,length(self.propd.name));
             % loop properties to build strings
-            for ii = 1:length(obj.propd.name)
+            for ii = 1:length(self.propd.name)
                 % add blank line before fcn
                 newContents{1,ii} = '';
                 % fcn header
                 newContents{2,ii} = sprintf('\t\tfunction %s = get.%s(%s)',...
-                    obj.propd.name{ii},obj.propd.name{ii},cname);
+                    self.propd.name{ii},self.propd.name{ii},cname);
                 % object property description as fcn documentation
-                newContents{3,ii} = sprintf('\t\t%% %s',obj.propd.desc{ii});    
+                newContents{3,ii} = sprintf('\t\t%% %s',self.propd.desc{ii});    
                 % add blank space for writings thangs
                 newContents{4,ii} = '\t\t\t';
                 % finish w/ end
@@ -106,13 +107,13 @@ classdef classy < matlab.mixin.SetGet
             % open file for writing 
             % this will overwrite the file but it is  necessary and the 
             % previous contents were found before and will be re-written
-            fid = obj.open('w');
+            fid = self.open('w');
             fprintf(fid,'%s\n',allContent{:});
             fprintf('Done.\n');
             fclose(fid);
         end
         
-        function get_propd(obj)
+        function get_propd(self)
         % this is the sister function to get_prop() that reads the dependent
         % object properties and saves name/value pairs. see get_prop() help
         % for more description.  
@@ -127,18 +128,18 @@ classdef classy < matlab.mixin.SetGet
         % output -> var  = {'var1', 'var2'} 
         %           desc = {'desc1','desc2'}
         %
-            contents = obj.read(); % read file contents
+            contents = self.read(); % read file contents
             % set flags
             enterflag = 'properties (Dependent)'; exitflag = 'end';
             % mine file for contents
             [name, desc] = parse_props(enterflag,exitflag,contents);
             % save name/value pair to object property structure
-            obj.propd.name = [name{:}]; 
-            obj.propd.desc = [desc{:}];
+            self.propd.name = [name{:}]; 
+            self.propd.desc = [desc{:}];
         end
         
-        function get_prop(obj)
-        % obj.get_prop() reads <classname>.m file and grabs property variable
+        function get_prop(self)
+        % self.get_prop() reads <classname>.m file and grabs property variable
         % names paired with the adjacent comment discription. this is a 
         % helper file to automate documentation files. the fcn uses the 
         % classy.read() function for some automated error screening (this 
@@ -155,21 +156,21 @@ classdef classy < matlab.mixin.SetGet
         % output -> var  = {'var1', 'var2'} 
         %           desc = {'desc1','desc2'}
         %
-            contents = obj.read(); % read file contents
+            contents = self.read(); % read file contents
             % set flags
             enterflag = 'properties'; exitflag = 'end';
             % mine file for contents
             [name, desc] = parse_props(enterflag,exitflag,contents);
             % save name/value pair to object property structure
-            obj.prop.name = [name{:}];
-            obj.prop.desc = [desc{:}];
+            self.prop.name = [name{:}];
+            self.prop.desc = [desc{:}];
         end
         
-        function contents = read(obj)              
+        function contents = read(self)              
         % read any ascii file line by line
         % each line is saved as a row in cell array
-            obj.chk_name();
-            fid = obj.open();
+            self.chk_name();
+            fid = self.open();
             % loop till end of file or flag
             contents = []; cnt = 1;
             while ~feof(fid)
@@ -184,37 +185,38 @@ classdef classy < matlab.mixin.SetGet
             end
         end
         
-        function create(obj,mkfolder)
+        function create(self,mkfolder)
         % automate standard class generation 
         %   removes some boiler plate code 
         % notes:
         %   * mkfolder = 1 by default and will create @classname folder for
         %   the class. to turn this off, pass in a false boolean 
         %   * object file name used as class name
-        %   * class folder created in obj.path and obj.ext ignored     
+        %   * class folder created in self.path and self.ext ignored     
         %   * does not overwite - appends to end of file if exists
             
-            % error screen null entries
+            % error screen null entry
             if nargin < 2       % chk number of inputs
-                mkfolder = 1;   % default to folder version
+                mkfolder = 1;   % default to making class folder
             end
             
-            % check mkfolder logic
-            if mkfolder         
-                % add @class folder
-                obj.path = fullfile(obj.path,['@' obj.name]); 
-            end            
+            % check for mkfolder boolean AND check path for existing
+            % @class folder
+            if mkfolder && isempty(regexp(self.path,'@'))      
+                self.path = fullfile(self.path,['@' self.name]);            
+            end   
             
-            mkdir(obj.path);
-            fprintf('Added class folder %s\n',obj.path)
+            % add @class folder
+            mkdir(self.path);
+            fprintf('Added class folder %s\n',self.path)
 
             % create class.m file in @class folder
-            fid = fopen(obj.fullname,'a');
+            fid = fopen(self.fullname,'a');
             % ---- write contents ----
             % header
-            fprintf(fid,'classdef %s < matlab.mixin.SetGet\n', obj.name);
-            fprintf(fid,'%%%% classdef %s\n', obj.name);
-            fprintf(fid,'%% author: \n');
+            fprintf(fid,'classdef %s < matlab.mixin.SetGet\n', self.name);
+            fprintf(fid,'%%%% classdef %s\n', self.name);
+            fprintf(fid,'%% author: %s\n',self.author);
             fprintf(fid,'%% create date: %s\n\n', char(datetime));
             % properties
             fprintf(fid,'\t%%%% -- object properties -- %%%%\n');
@@ -227,7 +229,7 @@ classdef classy < matlab.mixin.SetGet
             fprintf(fid,'\t%%%% -- dynamic methods-- %%%%\n');
             fprintf(fid,'\tmethods\n');
             fprintf(fid,'\t\t%%%% -- constructor -- %%%%\n');
-            fprintf(fid,'\t\tfunction obj = %s()\n\t\tend\n\n',obj.name);
+            fprintf(fid,'\t\tfunction self = %s()\n\t\tend\n\n',self.name);
             fprintf(fid,'\t\t%%%% -- dependent methods -- %%%%\n\n');
             fprintf(fid,'\tend\n\n');
             fprintf(fid,'\t%%%% -- static methods -- %%%%\n');
@@ -241,13 +243,13 @@ classdef classy < matlab.mixin.SetGet
         end       
         
         %% -- dependent methods -- %%
-        function fullname = get.fullname(obj)
+        function fullname = get.fullname(self)
         % get full file name based on path, name, and ext.
         % error screen '.txt' 'txt' possibility
-            if obj.ext(1) == '.'
-                fullname = fullfile(obj.path,[obj.name obj.ext]);
+            if self.ext(1) == '.'
+                fullname = fullfile(self.path,[self.name self.ext]);
             else
-                fullname = fullfile(obj.path,[obj.name '.' obj.ext]);
+                fullname = fullfile(self.path,[self.name '.' self.ext]);
             end
         end
     end
@@ -259,14 +261,14 @@ classdef classy < matlab.mixin.SetGet
     %% -- internal methods -- %%    
     methods (Access = private)
         
-        function chk_name(obj)
+        function chk_name(self)
         % error screen null name entry
-            if isempty(obj.name)
+            if isempty(self.name)
                 error('Name that thang.')
             end
         end
         
-        function fid = open(obj,perm)
+        function fid = open(self,perm)
             % open file with error screening capability.
             % this function is meant to be a catch-all for catching errors (for
             % lack of a better word) and aid in scalability
@@ -277,7 +279,7 @@ classdef classy < matlab.mixin.SetGet
                 perm = 'r'; % default to read only
             end
             % open file with permissions
-            [fid, errmsg] = fopen(obj.fullname,perm);
+            [fid, errmsg] = fopen(self.fullname,perm);
             if ~isempty(errmsg)
                 error(errmsg);
             end
@@ -336,10 +338,10 @@ function [name, desc] = parse_props(enterflag,exitflag,contents)
     if isempty(desc) desc = {''}; end
 end
 
-%%         function txt = parse_literals(obj,enterflag,exitflag)
+%%         function txt = parse_literals(self,enterflag,exitflag)
 %         % function accepts and enterflag and exit flag and returns all
 %         % lines of text within the file inbetween
-%             fid = obj.open();
+%             fid = self.open();
 %             % setup meta
 %             flg = 0; cnt = 0; txt = [];
 %             % loop for flags
