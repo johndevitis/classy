@@ -1,4 +1,4 @@
-%% classy tests
+%% classy example1
 %
 % this script shows some of classy's functionality as well as some tests to
 % be run after changing [any] of the code that effects that specific
