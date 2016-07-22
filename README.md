@@ -37,7 +37,7 @@ c = classy();
 c.name = 'myclass';
 ```
 
-when creating the full class folder and file either call the `crate()` method with no inputs or explicitly pass a true boolean  
+when creating the full class folder and file either call the `create()` method with no inputs or explicitly pass a true boolean  
 ```
 c.create() % c.create(1) works also
 ```
