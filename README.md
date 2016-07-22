@@ -25,9 +25,9 @@ c.name = 'myclass';
 
 
 generate class definition code in default C:\Temp directory
-    *note:* by passing a false boolean to the create_class() method we are saying that we do not want to create the class folder @myclass
+    *note:* by passing a false boolean to the create() method we are saying that we do not want to create the class folder @myclass
 ```
-c.create_class(0)
+c.create(0)
 ```
 
 ## create a custom class - folder version
