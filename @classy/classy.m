@@ -12,9 +12,9 @@ classdef classy < matlab.mixin.SetGet
         path = 'C:\Temp' % root path  
         name = 'foo'     % class name 
         ext = 'm'        % matlab ext
-        author           % class creator
-        prop             
-        propd
+        author           % author of class
+        prop             % class properties
+        propd            % class properties (dependent)
     end
     
     %% -- dependent properties -- %%
