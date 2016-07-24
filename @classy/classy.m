@@ -19,7 +19,7 @@ classdef classy < matlab.mixin.SetGet
     
     %% -- dependent properties -- %%
     properties (Dependent)
-        fullname
+        fullname        % full file path/name.ext generated 
     end
     
     %% -- developer properties -- %%
