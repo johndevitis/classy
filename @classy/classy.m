@@ -212,8 +212,8 @@ classdef classy < matlab.mixin.SetGet
             end   
             
             % add @class folder
-            mkdir(self.path);
-            fprintf('Added class folder %s\n',self.path)
+            [~,~,~] = mkdir(self.path); % suppress warnings
+            fprintf('Added class to: %s\n',self.path)
 
             % create class.m file in @class folder
             fid = fopen(self.fullname,'a');
