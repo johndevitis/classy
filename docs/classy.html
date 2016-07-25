@@ -1,0 +1,551 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>classy</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-07-25"><meta name="DC.source" content="classy.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">classy</a></li><li><a href="#3">properties</a></li><li><a href="#4">dependent properties</a></li><li><a href="#5">developer properties</a></li><li><a href="#6">dynamic methods</a></li><li><a href="#7">constructor</a></li><li><a href="#8">get_propd - get dependent class properties</a></li><li><a href="#10">self.get_prop() reads <a href="classname">classname</a>.m file and grabs property variable</a></li><li><a href="#12">read() - read any ascii file line by line</a></li><li><a href="#14">create(mkfolder) - automate standard class generation</a></li><li><a href="#16">dependent methods</a></li><li><a href="#18">static methods</a></li><li><a href="#19">private methods</a></li><li><a href="#20">check_name()</a></li><li><a href="#22">open() - open file with error screening capability.</a></li><li><a href="#25">utility functions</a></li><li><a href="#26">parse_props(enterflag,exitflag,contents) - parse class properties</a></li></ul></div><pre class="codeinput"><span class="keyword">classdef</span> classy &lt; matlab.mixin.SetGet
+</pre><h2>classy<a name="2"></a></h2><p>classy() is a utility class used for automated generation and documentation of classdefs.</p><div><ul><li>optional input fullpath to assign path, name, and extension on create</li></ul></div><p>author: jdv create date: 23-April-2016</p><h2>properties<a name="3"></a></h2><pre class="codeinput">    properties
+        path = <span class="string">'C:\Temp'</span> <span class="comment">% root path</span>
+        name = <span class="string">'foo'</span>     <span class="comment">% class name</span>
+        ext = <span class="string">'m'</span>        <span class="comment">% matlab ext</span>
+        author           <span class="comment">% author of class</span>
+        prop             <span class="comment">% class properties</span>
+        propd            <span class="comment">% class properties (dependent)</span>
+    <span class="keyword">end</span>
+</pre><h2>dependent properties<a name="4"></a></h2><pre class="codeinput">    properties (Dependent)
+        fullname        <span class="comment">% full file path/name.ext generated</span>
+    <span class="keyword">end</span>
+</pre><h2>developer properties<a name="5"></a></h2><pre class="codeinput">    properties (Access = private)
+
+    <span class="keyword">end</span>
+</pre><h2>dynamic methods<a name="6"></a></h2><pre class="codeinput">    methods
+</pre><h2>constructor<a name="7"></a></h2><pre class="codeinput">        <span class="keyword">function</span> self = classy(fullpath)
+            <span class="keyword">if</span> nargin &gt; 0
+                [self.path,self.name,self.ext] = fileparts(fullpath);
+                <span class="keyword">if</span> isempty(self.ext)
+                    self.ext = <span class="string">'.m'</span>;
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+
+        <span class="keyword">function</span> get_propd(self)
+</pre><h2>get_propd - get dependent class properties<a name="8"></a></h2><p>this is the sister function to get_prop() that reads the dependent object properties and saves name/value pairs. see get_prop() help for more description.</p><pre class="language-matlab"><span class="keyword">classdef</span> classname
+<span class="keyword">properties</span>        &lt;- write flag
+  var1 <span class="comment">% desc1    &lt;- this works</span>
+  var2 <span class="comment">%desc2     &lt;- this also works</span>
+  var3<span class="comment">%desc3      &lt;- this also also works</span>
+<span class="keyword">end</span>               &lt;- exitflag
+</pre><pre class="language-matlab">output
+var  = {<span class="string">'var1'</span>, <span class="string">'var2'</span>}
+desc = {<span class="string">'desc1'</span>,<span class="string">'desc2'</span>}
+</pre><pre class="codeinput">            contents = self.read(); <span class="comment">% read file contents</span>
+            <span class="comment">% set flags</span>
+            enterflag = <span class="string">'properties (Dependent)'</span>; exitflag = <span class="string">'end'</span>;
+            <span class="comment">% mine file for contents</span>
+            [name, desc] = parse_props(enterflag,exitflag,contents);
+            <span class="comment">% save name/value pair to object property structure</span>
+            self.propd.name = [name{:}];
+            self.propd.desc = [desc{:}];
+</pre><pre class="codeinput">        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> get_prop(self)
+</pre><h2>self.get_prop() reads <a href="classname">classname</a>.m file and grabs property variable<a name="10"></a></h2><p>names paired with the adjacent comment discription. this is a helper file to automate documentation files. the fcn uses the classy.read() function for some automated error screening (this might be removed in the future) and the parse_props utility function to parse name/value pairs of standard object properties</p><p>classdef classname properties        &lt;- write flag   var1 % desc1    &lt;- this works   var2 %desc2     &lt;- this also works   var3%desc3      &lt;- this also also works end               &lt;- exitflag</p><p>output -&gt; var  = {'var1', 'var2'}           desc = {'desc1','desc2'}</p><pre class="codeinput">            contents = self.read(); <span class="comment">% read file contents</span>
+            <span class="comment">% set flags</span>
+            enterflag = <span class="string">'properties'</span>; exitflag = <span class="string">'end'</span>;
+            <span class="comment">% mine file for contents</span>
+            [name, desc] = parse_props(enterflag,exitflag,contents);
+            <span class="comment">% save name/value pair to object property structure</span>
+            self.prop.name = [name{:}];
+            self.prop.desc = [desc{:}];
+</pre><pre class="codeinput">        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> contents = read(self)
+</pre><h2>read() - read any ascii file line by line<a name="12"></a></h2><p>each line is saved as a row in cell array</p><pre class="codeinput">            self.chk_name();
+            fid = self.open();
+            <span class="comment">% loop till end of file or flag</span>
+            contents = []; cnt = 1;
+            <span class="keyword">while</span> ~feof(fid)
+                <span class="comment">% read line</span>
+                contents{cnt,1} = fgetl(fid);
+                cnt = cnt+1;
+            <span class="keyword">end</span>
+            <span class="comment">% close file &amp; report status</span>
+            status = fclose(fid);
+            <span class="keyword">if</span> status == 0; fprintf(<span class="string">'Read successful. \n'</span>);
+            <span class="keyword">else</span> fprintf(<span class="string">'Not successful. Damn. \n'</span>);
+            <span class="keyword">end</span>
+</pre><pre class="codeinput">        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> create(self,mkfolder)
+</pre><h2>create(mkfolder) - automate standard class generation<a name="14"></a></h2><p>removes some boiler plate code</p><p><b>notes:</b></p><div><ul><li>mkfolder = 1 by default and will create @classname folder for the class. to turn this off, pass in a false boolean</li><li>object file name used as class name</li><li>class folder created in self.path and self.ext ignored</li><li>does not overwite - appends to end of file if exists</li></ul></div><pre class="codeinput">            <span class="comment">% error screen null entry</span>
+            <span class="keyword">if</span> nargin &lt; 2       <span class="comment">% chk number of inputs</span>
+                mkfolder = 1;   <span class="comment">% default to making class folder</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">% check for mkfolder boolean AND check path for existing</span>
+            <span class="comment">% @class folder</span>
+            <span class="keyword">if</span> mkfolder &amp;&amp; isempty(regexp(self.path,<span class="string">'@'</span>))
+                self.path = fullfile(self.path,[<span class="string">'@'</span> self.name]);
+            <span class="keyword">end</span>
+
+            <span class="comment">% add @class folder</span>
+            [~,~,~] = mkdir(self.path); <span class="comment">% suppress warnings</span>
+            fprintf(<span class="string">'Added class to: %s\n'</span>,self.path)
+
+            <span class="comment">% create class.m file in @class folder</span>
+            fid = fopen(self.fullname,<span class="string">'a'</span>);
+            <span class="comment">% ---- write contents ----</span>
+            <span class="comment">% header</span>
+            fprintf(fid,<span class="string">'classdef %s &lt; matlab.mixin.SetGet\n'</span>, self.name);
+            fprintf(fid,<span class="string">'%%%% classdef %s\n'</span>, self.name);
+            fprintf(fid,<span class="string">'%% \n'</span>);
+            fprintf(fid,<span class="string">'%% \n'</span>);
+            fprintf(fid,<span class="string">'%% \n'</span>);
+            fprintf(fid,<span class="string">'%% author: %s\n'</span>,self.author);
+            fprintf(fid,<span class="string">'%% create date: %s\n\n'</span>, char(datetime));
+            <span class="comment">% properties</span>
+            fprintf(fid,<span class="string">'%%%% object properties\n'</span>);
+            fprintf(fid,<span class="string">'\tproperties\n\tend\n\n'</span>);
+            fprintf(fid,<span class="string">'%%%% dependent properties\n'</span>);
+            fprintf(fid,<span class="string">'\tproperties (Dependent)\n\tend\n\n'</span>);
+            fprintf(fid,<span class="string">'%%%% private properties\n'</span>);
+            fprintf(fid,<span class="string">'\tproperties (Access = private)\n\tend\n\n'</span>);
+            <span class="comment">% methods</span>
+            fprintf(fid,<span class="string">'%%%% dynamic methods\n'</span>);
+            fprintf(fid,<span class="string">'\tmethods\n'</span>);
+            fprintf(fid,<span class="string">'\t%%%% constructor\n'</span>);
+            fprintf(fid,<span class="string">'\t\tfunction self = %s()\n\t\tend\n\n'</span>,self.name);
+            fprintf(fid,<span class="string">'\t%%%% dependent methods\n\n'</span>);
+            fprintf(fid,<span class="string">'\tend\n\n'</span>);
+            fprintf(fid,<span class="string">'%%%% static methods\n'</span>);
+            fprintf(fid,<span class="string">'\tmethods (Static)\n\tend\n\n'</span>);
+            fprintf(fid,<span class="string">'%%%% protected methods\n'</span>);
+            fprintf(fid,<span class="string">'\tmethods (Access = protected)\n\tend\n\n'</span>);
+            <span class="comment">% finish</span>
+            fprintf(fid,<span class="string">'end\n'</span>);
+            <span class="comment">% close file</span>
+            fclose(fid);
+</pre><pre class="codeinput">        <span class="keyword">end</span>
+</pre><pre class="codeoutput">
+ans = 
+
+</pre><h2>dependent methods<a name="16"></a></h2><pre class="codeinput">        <span class="keyword">function</span> fullname = get.fullname(self)
+        <span class="comment">% get full file name based on path, name, and ext.</span>
+        <span class="comment">% error screen '.txt' 'txt' possibility</span>
+            <span class="keyword">if</span> self.ext(1) == <span class="string">'.'</span>
+                fullname = fullfile(self.path,[self.name self.ext]);
+            <span class="keyword">else</span>
+                fullname = fullfile(self.path,[self.name <span class="string">'.'</span> self.ext]);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+</pre><pre class="codeoutput">  classy with properties:
+
+        path: 'C:\Temp'
+        name: 'foo'
+         ext: 'm'
+      author: []
+        prop: []
+       propd: []
+    fullname: 'C:\Temp\foo.m'
+
+</pre><pre class="codeinput">    <span class="keyword">end</span>
+</pre><h2>static methods<a name="18"></a></h2><pre class="codeinput">    methods (Static)
+    <span class="keyword">end</span>
+</pre><h2>private methods<a name="19"></a></h2><pre class="codeinput">    methods (Access = private)
+
+        <span class="keyword">function</span> chk_name(self)
+</pre><h2>check_name()<a name="20"></a></h2><p>error screen null name entry</p><pre class="codeinput">            <span class="keyword">if</span> isempty(self.name)
+                error(<span class="string">'Name that thang.'</span>)
+            <span class="keyword">end</span>
+</pre><pre class="codeinput">        <span class="keyword">end</span>
+
+        <span class="keyword">function</span> fid = open(self,perm)
+</pre><h2>open() - open file with error screening capability.<a name="22"></a></h2><p>this function is meant to be a catch-all for catching errors (for lack of a better word) and aid in scalability</p><p>perm = optional permissions, defaults to read only -&gt; perm = 'r';</p><pre class="codeinput">            <span class="keyword">if</span> nargin &lt; 2 <span class="comment">% error screen null perm entry</span>
+                perm = <span class="string">'r'</span>; <span class="comment">% default to read only</span>
+            <span class="keyword">end</span>
+            <span class="comment">% open file with permissions</span>
+            [fid, errmsg] = fopen(self.fullname,perm);
+            <span class="keyword">if</span> ~isempty(errmsg)
+                error(errmsg);
+            <span class="keyword">end</span>
+</pre><pre class="codeinput">        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><h2>utility functions<a name="25"></a></h2><pre class="codeinput"><span class="keyword">function</span> [name, desc] = parse_props(enterflag,exitflag,contents)
+</pre><h2>parse_props(enterflag,exitflag,contents) - parse class properties<a name="26"></a></h2><p>mine classdef property definitions by enter/exit flags and return name/value pairs</p><p>Bug1: currently does not support empty name/description grouping.   that is:       properties           % this is a description w/ no name       end   will not work</p><p>Bug2: the inverse of bug1 is true - function requires comments (desc) to register a class property name</p><p>Bug3: does not pick up two spaces between <a href="name">name</a> %  <a href="desc">desc</a></p><pre class="codeinput">    writeflag = 0;
+    cnt = 0; <span class="comment">% match counter</span>
+    txt=[];  <span class="comment">% matched content</span>
+    <span class="keyword">for</span> ii = 1:length(contents) <span class="comment">% loop for flags</span>
+        <span class="comment">% trim leading/trailing whitespace of line ii</span>
+        cont = strtrim(contents{ii});
+        <span class="comment">% check start flag</span>
+        <span class="keyword">if</span> strcmp(cont,enterflag)
+            writeflag = 1; <span class="comment">% flag for write</span>
+        <span class="keyword">end</span>
+        <span class="comment">% check exit flag</span>
+        <span class="keyword">if</span> strcmp(cont,exitflag) &amp;&amp; writeflag == 1
+            <span class="comment">% if previously writing and exitflag caught</span>
+            <span class="comment">% then stop writing</span>
+            writeflag = 0;
+        <span class="keyword">end</span>
+        <span class="comment">% check for write flag, do not write on first flag</span>
+        <span class="keyword">if</span> writeflag == 1
+            cnt = cnt+1;     <span class="comment">% advance matched counter</span>
+            txt{cnt} = cont; <span class="comment">% save matched content</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    <span class="comment">% REMOVE enter flag from matched text</span>
+    txt = txt(2:end);
+    <span class="comment">% separate variable name and descriptive comment</span>
+    name = regexp(txt,<span class="string">'\w*(?=(.)?%(.)?)'</span>,<span class="string">'match'</span>);
+    desc = regexp(txt,<span class="string">'(?&lt;=%(.)?)\w+.*$'</span>,<span class="string">'match'</span>);
+    <span class="comment">% error screen null prop/desc entries</span>
+    <span class="keyword">if</span> isempty(name) name = {<span class="string">''</span>}; <span class="keyword">end</span>
+    <span class="keyword">if</span> isempty(desc) desc = {<span class="string">''</span>}; <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+classdef classy < matlab.mixin.SetGet
+%% classy 
+% classy() is a utility class used for automated generation and 
+% documentation of classdefs. 
+%
+% * optional input fullpath to assign path, name, and extension on create
+%
+% author: jdv 
+% create date: 23-April-2016
+
+%% properties
+    properties
+        path = 'C:\Temp' % root path  
+        name = 'foo'     % class name 
+        ext = 'm'        % matlab ext
+        author           % author of class
+        prop             % class properties
+        propd            % class properties (dependent)
+    end
+    
+%% dependent properties
+    properties (Dependent)
+        fullname        % full file path/name.ext generated 
+    end
+    
+%% developer properties
+    properties (Access = private)
+
+    end
+    
+%% dynamic methods 
+    methods
+        %% constructor
+        function self = classy(fullpath)
+            if nargin > 0
+                [self.path,self.name,self.ext] = fileparts(fullpath);
+                if isempty(self.ext)
+                    self.ext = '.m';
+                end
+            end
+        end        
+                
+
+        function get_propd(self)
+        %% get_propd - get dependent class properties
+        %
+        % this is the sister function to get_prop() that reads the dependent
+        % object properties and saves name/value pairs. see get_prop() help
+        % for more description.  
+        %
+        %   classdef classname
+        %   properties        <- write flag
+        %     var1 % desc1    <- this works
+        %     var2 %desc2     <- this also works
+        %     var3%desc3      <- this also also works
+        %   end               <- exitflag
+        %
+        %   output
+        %   var  = {'var1', 'var2'} 
+        %   desc = {'desc1','desc2'}
+        %
+            contents = self.read(); % read file contents
+            % set flags
+            enterflag = 'properties (Dependent)'; exitflag = 'end';
+            % mine file for contents
+            [name, desc] = parse_props(enterflag,exitflag,contents);
+            % save name/value pair to object property structure
+            self.propd.name = [name{:}]; 
+            self.propd.desc = [desc{:}];
+        end
+        
+        function get_prop(self)
+        %% self.get_prop() reads <classname>.m file and grabs property variable
+        % names paired with the adjacent comment discription. this is a 
+        % helper file to automate documentation files. the fcn uses the 
+        % classy.read() function for some automated error screening (this 
+        % might be removed in the future) and the parse_props utility 
+        % function to parse name/value pairs of standard object properties
+        %
+        % classdef classname
+        % properties        <- write flag
+        %   var1 % desc1    <- this works
+        %   var2 %desc2     <- this also works
+        %   var3%desc3      <- this also also works
+        % end               <- exitflag
+        %
+        % output -> var  = {'var1', 'var2'} 
+        %           desc = {'desc1','desc2'}
+        %
+            contents = self.read(); % read file contents
+            % set flags
+            enterflag = 'properties'; exitflag = 'end';
+            % mine file for contents
+            [name, desc] = parse_props(enterflag,exitflag,contents);
+            % save name/value pair to object property structure
+            self.prop.name = [name{:}];
+            self.prop.desc = [desc{:}];
+        end
+        
+        function contents = read(self)              
+        %% read() - read any ascii file line by line
+        % each line is saved as a row in cell array
+            self.chk_name();
+            fid = self.open();
+            % loop till end of file or flag
+            contents = []; cnt = 1;
+            while ~feof(fid)
+                % read line
+                contents{cnt,1} = fgetl(fid);
+                cnt = cnt+1;
+            end
+            % close file & report status
+            status = fclose(fid);
+            if status == 0; fprintf('Read successful. \n');
+            else fprintf('Not successful. Damn. \n');
+            end
+        end
+        
+        function create(self,mkfolder)
+        %% create(mkfolder) - automate standard class generation 
+        % removes some boiler plate code 
+        %
+        % *notes:*
+        % 
+        % * mkfolder = 1 by default and will create @classname folder for
+        % the class. to turn this off, pass in a false boolean 
+        % * object file name used as class name
+        % * class folder created in self.path and self.ext ignored     
+        % * does not overwite - appends to end of file if exists
+            
+            % error screen null entry
+            if nargin < 2       % chk number of inputs
+                mkfolder = 1;   % default to making class folder
+            end
+            
+            % check for mkfolder boolean AND check path for existing
+            % @class folder
+            if mkfolder && isempty(regexp(self.path,'@'))      
+                self.path = fullfile(self.path,['@' self.name]);            
+            end   
+            
+            % add @class folder
+            [~,~,~] = mkdir(self.path); % suppress warnings
+            fprintf('Added class to: %s\n',self.path)
+
+            % create class.m file in @class folder
+            fid = fopen(self.fullname,'a');
+            % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH write contents REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+            % header
+            fprintf(fid,'classdef %s < matlab.mixin.SetGet\n', self.name);
+            fprintf(fid,'%%%% classdef %s\n', self.name);
+            fprintf(fid,'%% \n');
+            fprintf(fid,'%% \n');
+            fprintf(fid,'%% \n');
+            fprintf(fid,'%% author: %s\n',self.author);
+            fprintf(fid,'%% create date: %s\n\n', char(datetime));
+            % properties
+            fprintf(fid,'%%%% object properties\n');
+            fprintf(fid,'\tproperties\n\tend\n\n');
+            fprintf(fid,'%%%% dependent properties\n');
+            fprintf(fid,'\tproperties (Dependent)\n\tend\n\n');            
+            fprintf(fid,'%%%% private properties\n');
+            fprintf(fid,'\tproperties (Access = private)\n\tend\n\n');
+            % methods
+            fprintf(fid,'%%%% dynamic methods\n');
+            fprintf(fid,'\tmethods\n');
+            fprintf(fid,'\t%%%% constructor\n');
+            fprintf(fid,'\t\tfunction self = %s()\n\t\tend\n\n',self.name);
+            fprintf(fid,'\t%%%% dependent methods\n\n');
+            fprintf(fid,'\tend\n\n');
+            fprintf(fid,'%%%% static methods\n');
+            fprintf(fid,'\tmethods (Static)\n\tend\n\n');
+            fprintf(fid,'%%%% protected methods\n');
+            fprintf(fid,'\tmethods (Access = protected)\n\tend\n\n');
+            % finish
+            fprintf(fid,'end\n');
+            % close file
+            fclose(fid);            
+        end       
+        
+    %% dependent methods
+        function fullname = get.fullname(self)
+        % get full file name based on path, name, and ext.
+        % error screen '.txt' 'txt' possibility
+            if self.ext(1) == '.'
+                fullname = fullfile(self.path,[self.name self.ext]);
+            else
+                fullname = fullfile(self.path,[self.name '.' self.ext]);
+            end
+        end
+    end
+    
+%% static methods 
+    methods (Static) 
+    end
+    
+%% private methods
+    methods (Access = private)
+        
+        function chk_name(self)
+        %% check_name()
+        % error screen null name entry
+            if isempty(self.name)
+                error('Name that thang.')
+            end
+        end
+        
+        function fid = open(self,perm)
+        %% open() - open file with error screening capability.
+        % this function is meant to be a catch-all for catching errors (for
+        % lack of a better word) and aid in scalability
+        %
+        % perm = optional permissions, defaults to read only -> perm = 'r';
+        %
+            if nargin < 2 % error screen null perm entry
+                perm = 'r'; % default to read only
+            end
+            % open file with permissions
+            [fid, errmsg] = fopen(self.fullname,perm);
+            if ~isempty(errmsg)
+                error(errmsg);
+            end
+        end        
+    end    
+end
+
+
+%% utility functions 
+
+function [name, desc] = parse_props(enterflag,exitflag,contents)
+%% parse_props(enterflag,exitflag,contents) - parse class properties
+% mine classdef property definitions by enter/exit flags and return
+% name/value pairs
+%
+% Bug1: currently does not support empty name/description grouping. 
+%   that is:
+%       properties 
+%           % this is a description w/ no name 
+%       end
+%   will not work
+%
+% Bug2: the inverse of bug1 is true - function requires comments (desc) to
+% register a class property name
+%
+% Bug3: does not pick up two spaces between <name> % __ <desc>
+% 
+    writeflag = 0; 
+    cnt = 0; % match counter
+    txt=[];  % matched content
+    for ii = 1:length(contents) % loop for flags
+        % trim leading/trailing whitespace of line ii
+        cont = strtrim(contents{ii});                
+        % check start flag
+        if strcmp(cont,enterflag)
+            writeflag = 1; % flag for write
+        end                
+        % check exit flag
+        if strcmp(cont,exitflag) && writeflag == 1
+            % if previously writing and exitflag caught
+            % then stop writing
+            writeflag = 0; 
+        end
+        % check for write flag, do not write on first flag
+        if writeflag == 1
+            cnt = cnt+1;     % advance matched counter
+            txt{cnt} = cont; % save matched content
+        end                  
+    end                      
+    % REMOVE enter flag from matched text
+    txt = txt(2:end);
+    % separate variable name and descriptive comment 
+    name = regexp(txt,'\w*(?=(.)?%(.)?)','match');
+    desc = regexp(txt,'(?<=%(.)?)\w+.*$','match');
+    % error screen null prop/desc entries
+    if isempty(name) name = {''}; end
+    if isempty(desc) desc = {''}; end
+end
+
+##### SOURCE END #####
+--></body></html>

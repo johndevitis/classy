@@ -45,3 +45,7 @@ c.create() % c.create(1) works also
 this creates the folder `@myclass` and places the classdef file `myclass.m` inside of it (or appended if you messed up and called it twice).
 
 *note that the c.fullname property was updated after the `create()` method was called but not before*
+
+
+# TODO
+* write method needs to check for self.prop and self.propd then incorporate that into the self.create()

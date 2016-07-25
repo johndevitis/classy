@@ -1,8 +1,7 @@
 %% classy example1
 %
 % this script shows some of classy's functionality as well as some tests to
-% be run after changing [any] of the code that effects that specific
-% functionality
+% be run after changing [any] of the code 
 %
 % author: jdv
 % create date: 04232016
@@ -13,7 +12,7 @@
 c = classy();
  
 % use default name (foo) and destination folder (C:\Temp)
-c.create_class();
+c.create();
 
 % open class in matlab editor
 edit(c.fullname);
