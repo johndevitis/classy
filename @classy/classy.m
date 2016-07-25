@@ -1,5 +1,6 @@
-classdef classy < matlab.mixin.SetGet
+classdef classy < file
 %% classy 
+%
 % classy() is a utility class used for automated generation and 
 % documentation of classdefs. 
 %
@@ -10,17 +11,14 @@ classdef classy < matlab.mixin.SetGet
 
 %% properties
     properties
-        path = 'C:\Temp' % root path  
-        name = 'foo'     % class name 
-        ext = 'm'        % matlab ext
-        author           % author of class
-        prop             % class properties
-        propd            % class properties (dependent)
+        author  % author of class
+        prop    % class properties
+        propd   % class properties (dependent)
     end
     
 %% dependent properties
     properties (Dependent)
-        fullname        % full file path/name.ext generated 
+ 
     end
     
 %% developer properties
@@ -30,26 +28,21 @@ classdef classy < matlab.mixin.SetGet
     
 %% dynamic methods 
     methods
-        %% constructor
-        function self = classy(fullpath)
-            if nargin > 0
-                [self.path,self.name,self.ext] = fileparts(fullpath);
-                if isempty(self.ext)
-                    self.ext = '.m';
-                end
-            end
-        end        
         
-    %% dependent methods
-        function fullname = get.fullname(self)
-        % get full file name based on path, name, and ext.
-        % error screen '.txt' 'txt' possibility
-            if self.ext(1) == '.'
-                fullname = fullfile(self.path,[self.name self.ext]);
-            else
-                fullname = fullfile(self.path,[self.name '.' self.ext]);
-            end
+    %% constructor
+        function self = classy(fullpath)
+            if nargin < 1       % error screen empty input
+                fullpath = [];  % empty fullpath input (handled in @file)
+            end            
+            % call file superclass constructor
+            self@file(fullpath);            
+            % ensure class extension is for m-file
+            self.ext = '.m';
         end
+
+
+    %% dependent methods
+
     end
     
 %% static methods 
@@ -59,14 +52,6 @@ classdef classy < matlab.mixin.SetGet
     
 %% private methods
     methods (Access = private)
-        
-        function chk_name(self)
-        %% check_name()
-        % error screen null name entry
-            if isempty(self.name)
-                error('Name that thang.')
-            end
-        end
         
         function fid = open(self,perm)
         %% open() - open file with error screening capability.

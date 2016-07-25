@@ -2,6 +2,10 @@
 
 classy.m is a matlab classdef utility function.
 
+Notes:
+
+* classy is not a subclass of the file class (https://github.com/johndevitis/file)
+
 # examples
 
 ## create a stand-alone custom class
