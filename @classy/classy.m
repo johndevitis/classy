@@ -52,22 +52,6 @@ classdef classy < file
     
 %% private methods
     methods (Access = private)
-        
-        function fid = open(self,perm)
-        %% open() - open file with error screening capability.
-        % this function is meant to be a catch-all for catching errors (for
-        % lack of a better word) and aid in scalability
-        %
-        % perm = optional permissions, defaults to read only -> perm = 'r';
-        %
-            if nargin < 2 % error screen null perm entry
-                perm = 'r'; % default to read only
-            end
-            % open file with permissions
-            [fid, errmsg] = fopen(self.fullname,perm);
-            if ~isempty(errmsg)
-                error(errmsg);
-            end
-        end        
+              
     end    
 end
