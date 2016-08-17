@@ -26,10 +26,10 @@ function create(self,mkfolder)
     fprintf('Added class to: %s\n',self.path)
 
     % create class.m file in @class folder
-    fid = fopen(self.fullname,'a');
+    fid = fopen(self.fullname,'a'); % append only
     % ---- write contents ----
     % header
-    fprintf(fid,'classdef %s < matlab.mixin.SetGet\n', self.name);
+    fprintf(fid,'classdef %s < handle\n', self.name);
     fprintf(fid,'%%%% classdef %s\n', self.name);
     fprintf(fid,'%% \n');
     fprintf(fid,'%% \n');
