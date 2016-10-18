@@ -49,7 +49,6 @@ function create(self,mkfolder)
     fprintf(fid,'\t%%%% constructor\n');
     fprintf(fid,'\t\tfunction self = %s()\n\t\tend\n\n',self.name);
     fprintf(fid,'\t%%%% ordinary methods\n\n');
-    fprintf(fid,'\tend\n\n');
     fprintf(fid,'\t%%%% dependent methods\n\n');
     fprintf(fid,'\tend\n\n');
     fprintf(fid,'%%%% static methods\n');
