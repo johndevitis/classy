@@ -14,6 +14,9 @@ function [name, desc] = parse_props(enterflag,exitflag,contents)
 % register a class property name
 %
 % Bug3: does not pick up two spaces between <name> % __ <desc>
+%
+% Bug4: 10312016. new escape character: +
+%
 % 
     writeflag = 0; 
     cnt = 0; % match counter
