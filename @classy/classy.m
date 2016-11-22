@@ -14,6 +14,7 @@ classdef classy < file
         author  % author of class
         prop    % class properties
         propd   % class properties (dependent)
+        version = '0.1.1'
     end
     
 %% dependent properties
