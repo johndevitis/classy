@@ -56,8 +56,7 @@ function create(self,mkfolder)
 
     % finish
     fprintf(fid,'end\n');
-    % finish with footer
-%     fprintf(fid,'end%s\n',sprintf(' %% made with classy.m version %s',self.version));
+
     % close file
     fclose(fid);            
 end       
@@ -81,9 +80,3 @@ function add_method(fid,name)
     fprintf(fid,'%%%% %s methods\n',name);
     fprintf(fid,'\tmethods %s\n\tend%s\n\n',value,sprintf(' %% /%s',name));
 end
-
-% function add_footer(fid,ver)
-%     fprintf(fid,'\n\n%% -- meta footer -- %%\n');
-%     
-% end
-
