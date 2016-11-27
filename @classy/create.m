@@ -37,7 +37,7 @@ function create(self,mkfolder)
     fprintf(fid,'%% \n');
     fprintf(fid,'%% author: %s\n',self.author);
     fprintf(fid,'%% create date: %s\n', char(datetime));
-    fprintf(fid,'%% classy ver: %s\n\n',self.version);
+    fprintf(fid,'%% classy version: %s\n\n',self.version);
     
     % properties
     fprintf(fid,'%%%% object properties\n');
